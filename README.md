@@ -27,6 +27,7 @@ VkFFT is an efficient GPU-accelerated multidimensional Fast Fourier Transform li
  - ##### Ambitious
     - Multiple GPU job splitting
 
+
 ## Installation
 Vulkan version:
 Include the vkFFT.h file and glslang compiler. Provide the library with correctly chosen VKFFT_BACKEND definition (VKFFT_BACKEND=0 for Vulkan). Sample CMakeLists.txt file configures project based on Vulkan_FFT.cpp file, which contains examples on how to use VkFFT to perform FFT, iFFT and convolution calculations, use zero padding, multiple feature/batch convolutions, C2C FFTs of big systems, R2C/C2R transforms, R2R DCT-I, II, III and IV, double precision FFTs, half precision FFTs.\
