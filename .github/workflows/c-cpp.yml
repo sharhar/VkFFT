@@ -1,0 +1,28 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "testing" ]
+  pull_request:
+    branches: [ "testing" ]
+
+jobs:
+  build:
+
+    runs-on: macos-13
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: |
+        brew install cmake molten-vk fftw
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake -DUSE_FFTW=1 .. 
+        make -j4 -D
+    - name: Run
+      run: |
+        ./VkFFT_TestSuite -vkfft 11
+        
