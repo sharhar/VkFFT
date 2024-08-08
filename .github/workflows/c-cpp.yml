@@ -21,7 +21,7 @@ jobs:
         mkdir build
         cd build
         cmake -DUSE_FFTW=1 .. 
-        make -j4 -D
+        make -j4
     - name: Run
       run: |
         ./VkFFT_TestSuite -vkfft 11
