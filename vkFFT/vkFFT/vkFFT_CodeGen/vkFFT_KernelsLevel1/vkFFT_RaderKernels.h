@@ -70,7 +70,7 @@ static inline void appendFFTRaderStage(VkFFTSpecializationConstantsLayout* sc, P
 		else
 			sprintf(convolutionInverse, ", 1");
 	}*/
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	
 
 
@@ -169,7 +169,7 @@ static inline void appendFFTRaderStage(VkFFTSpecializationConstantsLayout* sc, P
 		}
 		
 		
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 		
 		
@@ -286,7 +286,7 @@ static inline void appendFFTRaderStage(VkFFTSpecializationConstantsLayout* sc, P
 
 		
 		
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 		
 		
@@ -470,7 +470,7 @@ static inline void appendFFTRaderStage(VkFFTSpecializationConstantsLayout* sc, P
 
 			
 			
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			
 			
 			
@@ -742,7 +742,7 @@ sdata[sharedStride * gl_LocalInvocationID.y + inoutID + %" PRIu64 "] = temp%s%s;
 
 			
 			
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			
 			
 			
@@ -897,7 +897,7 @@ sdata[sharedStride * gl_LocalInvocationID.y + inoutID + %" PRIu64 "] = temp%s%s;
 
 		
 		
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 		if (!sc->stridedSharedLayout) {
 			if (rader_stage == 0) {
@@ -1190,7 +1190,7 @@ sdata[sharedStride * gl_LocalInvocationID.y + inoutID + %" PRIu64 "] = temp%s%s;
 
 		
 		
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 		
 		
@@ -1270,7 +1270,7 @@ sdata[sharedStride * gl_LocalInvocationID.y + inoutID + %" PRIu64 "] = temp%s%s;
 
 		
 		
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 	}
 	return;
@@ -1319,7 +1319,7 @@ static inline void appendMultRaderStage(VkFFTSpecializationConstantsLayout* sc, 
 		else
 			sprintf(convolutionInverse, ", 1");
 	}*/
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	
 	
 	
@@ -1488,7 +1488,7 @@ static inline void appendMultRaderStage(VkFFTSpecializationConstantsLayout* sc, 
 				}
 				
 				
-				appendBarrierVkFFT(sc);
+				appendBarrierVkFFT(sc, __FILE__, __LINE__);
 				
 				
 				
@@ -1663,7 +1663,7 @@ static inline void appendMultRaderStage(VkFFTSpecializationConstantsLayout* sc, 
 
 			
 			
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			
 			//load deconv kernel
 			if (!sc->inline_rader_kernel) {
@@ -1977,7 +1977,7 @@ static inline void appendMultRaderStage(VkFFTSpecializationConstantsLayout* sc, 
 
 			
 			
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			
 			
 			
@@ -2096,7 +2096,7 @@ static inline void appendMultRaderStage(VkFFTSpecializationConstantsLayout* sc, 
 
 						
 						
-						appendBarrierVkFFT(sc);
+						appendBarrierVkFFT(sc, __FILE__, __LINE__);
 						
 						
 						
@@ -2135,7 +2135,7 @@ static inline void appendMultRaderStage(VkFFTSpecializationConstantsLayout* sc, 
 					}
 					
 					
-					appendBarrierVkFFT(sc);
+					appendBarrierVkFFT(sc, __FILE__, __LINE__);
 					
 					
 					
@@ -2192,7 +2192,7 @@ static inline void appendMultRaderStage(VkFFTSpecializationConstantsLayout* sc, 
 
 			
 			
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			
 			
 			
@@ -2365,7 +2365,7 @@ static inline void appendMultRaderStage(VkFFTSpecializationConstantsLayout* sc, 
 			}
 			
 			
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			
 		}
 	}

@@ -43,7 +43,7 @@ static inline void appendBluesteinMultiplication(VkFFTSpecializationConstantsLay
 	//char requestBatch[100] = "";
 	//char separateRegisterStore[100] = "";
 	if (!((sc->readToRegisters && (pre_or_post_multiplication == 0)) || (sc->writeFromRegisters && (pre_or_post_multiplication == 1)))) {
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 	}
 	if (sc->useDisableThreads) {

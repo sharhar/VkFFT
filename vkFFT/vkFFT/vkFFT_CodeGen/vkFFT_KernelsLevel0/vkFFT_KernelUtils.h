@@ -299,10 +299,10 @@ static inline void appendConversion(VkFFTSpecializationConstantsLayout* sc) {
 	return;
 }
 
-static inline void appendBarrierVkFFT(VkFFTSpecializationConstantsLayout* sc) {
+static inline void appendBarrierVkFFT(VkFFTSpecializationConstantsLayout* sc, const char* file, int line) {
 	if (sc->res != VKFFT_SUCCESS) return;
 #if(VKFFT_BACKEND==0)
-	sc->tempLen = sprintf(sc->tempStr, "memoryBarrier();\nbarrier();\n\n");
+	sc->tempLen = sprintf(sc->tempStr, "barrier();\nmemoryBarrier();\n\n /* %s %d */", file, line);
 	PfAppendLine(sc);
 #elif(VKFFT_BACKEND==1)
 	sc->tempLen = sprintf(sc->tempStr, "__syncthreads();\n\n");

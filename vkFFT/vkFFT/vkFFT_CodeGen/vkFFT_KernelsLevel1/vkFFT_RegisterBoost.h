@@ -70,7 +70,7 @@ static inline void appendBoostThreadDataReorder(VkFFTSpecializationConstantsLayo
 	if ((sc->registerBoost > 1) && (logicalStoragePerThread != sc->min_registers_per_thread * sc->registerBoost)) {
 		for (pfINT k = 0; k < sc->registerBoost; k++) {
 			if (k > 0) {
-				appendBarrierVkFFT(sc);
+				appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			}
 			if (sc->useDisableThreads) {
 				temp_int.data.i = 0;
@@ -107,7 +107,7 @@ static inline void appendBoostThreadDataReorder(VkFFTSpecializationConstantsLayo
 			if (sc->useDisableThreads) {
 				PfIf_end(sc);
 			}
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 
 			if (sc->useDisableThreads) {
 				temp_int.data.i = 0;

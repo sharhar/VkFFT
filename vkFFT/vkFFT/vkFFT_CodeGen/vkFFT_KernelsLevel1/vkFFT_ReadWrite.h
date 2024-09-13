@@ -419,7 +419,7 @@ static inline void appendReadWriteDataVkFFT_nonstrided(VkFFTSpecializationConsta
 	PfContainer temp_int1 = VKFFT_ZERO_INIT;
 	temp_int1.type = 31;
 	if ((!sc->writeFromRegisters) && (readWrite == 1))
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	//move to initialization
 	//char shiftY[100] = "";
 	//if (&sc->performWorkGroupShift[1])
@@ -466,7 +466,7 @@ static inline void appendReadWriteDataVkFFT_nonstrided(VkFFTSpecializationConsta
 	if (((sc->zeropad[readWrite]) || ((sc->zeropadBluestein[readWrite])) || (((type / 10) == 111)&&(sc->performDST == 1))) && (!readWrite)) {
 		if (sc->readToRegisters == 0) {
 			appendSetSMToZero(sc);
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		}
 	}
 	if (sc->zeropadBluestein[readWrite]) {
@@ -1259,7 +1259,7 @@ static inline void appendReadWriteDataVkFFT_strided(VkFFTSpecializationConstants
 		recalculateAtEveryStep_inoutID = 1;
 	}
 	if ((!sc->writeFromRegisters) && (readWrite == 1))
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	//char shiftX[500] = "";
 	//if (&sc->performWorkGroupShift[0])
 	//	sprintf(shiftX, " + consts.workGroupShiftX * %s ", &sc->gl_WorkGroupSize_x);
@@ -1268,7 +1268,7 @@ static inline void appendReadWriteDataVkFFT_strided(VkFFTSpecializationConstants
 	if (((sc->zeropad[readWrite]) || ((sc->zeropadBluestein[readWrite])) || (((type / 10) == 111)&&(sc->performDST == 1))) && (!readWrite)) {
 		if (sc->readToRegisters == 0) {
 			appendSetSMToZero(sc);
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		}
 	}
 	if (sc->zeropadBluestein[readWrite]) {

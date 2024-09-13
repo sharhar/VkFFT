@@ -59,7 +59,7 @@ static inline void appendRegisterStorage(VkFFTSpecializationConstantsLayout* sc,
 	}
 
 	if (((!sc->writeFromRegisters) && (readWrite == 0)) || ((!sc->readToRegisters) && (readWrite == 1)) || ((sc->convolutionStep) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)))) {
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 
 		if (sc->useDisableThreads) {
 			temp_int.data.i = 0;

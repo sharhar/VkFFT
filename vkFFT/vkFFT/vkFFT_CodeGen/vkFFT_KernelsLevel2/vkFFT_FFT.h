@@ -156,11 +156,11 @@ static inline VkFFTResult shaderGen_FFT(VkFFTSpecializationConstantsLayout* sc, 
 		for (int i = 0; i < sc->numStages; i++) {
 			if ((i == sc->numStages - 1) && (sc->registerBoost > 1)) {
 				temp_int.data.i = sc->stageRadix[i];
-				appendRadixStage(sc, &stageSize, &stageSizeSum, &stageAngle, &temp_int, i, locType);
+				appendRadixStage(sc, &stageSize, &stageSizeSum, &stageAngle, &temp_int, i, locType, __FILE__, __LINE__);
 			}
 			else {
 				temp_int.data.i = sc->stageRadix[i];
-				appendRadixStage(sc, &stageSize, &stageSizeSum, &stageAngle, &temp_int, i, locType);
+				appendRadixStage(sc, &stageSize, &stageSizeSum, &stageAngle, &temp_int, i, locType, __FILE__, locType);
 				if (i > 0) {
 					switch (sc->stageRadix[i]) {
 					case 2:
@@ -257,7 +257,7 @@ static inline VkFFTResult shaderGen_FFT(VkFFTSpecializationConstantsLayout* sc, 
 			else {
 				appendKernelConvolution(sc, locType);
 			}
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 
 		}
 		for (sc->coordinate.data.i = 0; sc->coordinate.data.i < max_coordinate+1; sc->coordinate.data.i++) {
@@ -271,7 +271,7 @@ static inline VkFFTResult shaderGen_FFT(VkFFTSpecializationConstantsLayout* sc, 
 				sc->inverse = 1;
 				for (pfUINT i = 0; i < (pfUINT)sc->numStages; i++) {
 					temp_int.data.i = sc->stageRadix[i];
-					appendRadixStage(sc, &stageSize, &stageSizeSum, &stageAngle, &temp_int, (int)i, locType);
+					appendRadixStage(sc, &stageSize, &stageSizeSum, &stageAngle, &temp_int, (int)i, locType, __FILE__, __LINE__);
 					if (i > 0) {
 						switch (sc->stageRadix[i]) {
 						case 2:

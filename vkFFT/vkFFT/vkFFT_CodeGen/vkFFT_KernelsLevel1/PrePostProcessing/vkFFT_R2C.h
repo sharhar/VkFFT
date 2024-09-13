@@ -225,7 +225,7 @@ static inline void appendC2R_read(VkFFTSpecializationConstantsLayout* sc, int ty
 
 	PfDivCeil(sc, &used_registers, &fftDim, &localSize);
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -408,7 +408,7 @@ static inline void appendC2R_read(VkFFTSpecializationConstantsLayout* sc, int ty
 		PfDivCeil(sc, &used_registers, &fftDim, &localSize);
 	}
 	if (!sc->readToRegisters) {
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		if (sc->useDisableThreads) {
 			temp_int.data.i = 0;
 			PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -512,7 +512,7 @@ static inline void appendR2C_write(VkFFTSpecializationConstantsLayout* sc, int t
 		//mult.data.i = 1;
 	}
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);

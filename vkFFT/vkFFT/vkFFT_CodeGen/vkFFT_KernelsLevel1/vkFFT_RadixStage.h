@@ -32,7 +32,7 @@
 #include "vkFFT/vkFFT_CodeGen/vkFFT_KernelsLevel1/vkFFT_RadixKernels.h"
 #include "vkFFT/vkFFT_CodeGen/vkFFT_KernelsLevel1/vkFFT_RaderKernels.h"
 
-static inline void appendRadixStageNonStrided(VkFFTSpecializationConstantsLayout* sc, PfContainer* stageSize, PfContainer* stageSizeSum, PfContainer* stageAngle, PfContainer* stageRadix) {
+static inline void appendRadixStageNonStrided(VkFFTSpecializationConstantsLayout* sc, PfContainer* stageSize, PfContainer* stageSizeSum, PfContainer* stageAngle, PfContainer* stageRadix, const char* file, int line) {
 	if (sc->res != VKFFT_SUCCESS) return;
 	PfContainer temp_int = VKFFT_ZERO_INIT;
 	temp_int.type = 31;
@@ -59,7 +59,7 @@ static inline void appendRadixStageNonStrided(VkFFTSpecializationConstantsLayout
 
 	if ((!((sc->readToRegisters == 1) && (stageSize->data.i == 1) && (!(((sc->convolutionStep) || (sc->useBluesteinFFT && sc->BluesteinConvolutionStep)) && (stageAngle->data.d > 0) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)))))) && ((sc->localSize[0].data.i * logicalStoragePerThread.data.i > sc->fftDim.data.i) || (stageSize->data.i > 1) || ((sc->localSize[1].data.i > 1) && (!(sc->performR2C && (sc->actualInverse) && (!sc->forceCallbackVersionRealTransforms)))) || ((sc->convolutionStep) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)) && (stageAngle->data.d > 0)) || ((sc->performDCT) || (sc->performDST))))
 	{
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, file, line);
 		
 	}
 	
@@ -199,7 +199,7 @@ static inline void appendRadixStageNonStrided(VkFFTSpecializationConstantsLayout
 				PfIf_end(sc);
 			}
 			
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			
 
 			sc->useCoalescedLUTUploadToSM = 1;
@@ -227,7 +227,7 @@ static inline void appendRadixStageNonStrided(VkFFTSpecializationConstantsLayout
 					PfIf_end(sc);
 				}
 			}
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			
 			if (sc->useDisableThreads) {
 				temp_int.data.i = 0;
@@ -324,7 +324,7 @@ static inline void appendRadixStageStrided(VkFFTSpecializationConstantsLayout* s
 
 	if ((!((sc->readToRegisters == 1) && (stageSize->data.i == 1) && (!(((sc->convolutionStep) || (sc->useBluesteinFFT && sc->BluesteinConvolutionStep)) && (stageAngle->data.d > 0) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)))))) && (((sc->axis_id == 0) && (sc->axis_upload_id == 0) && (!(sc->performR2C && (sc->actualInverse) && (!sc->forceCallbackVersionRealTransforms)))) || (sc->localSize[1].data.i * logicalStoragePerThread.data.i > sc->fftDim.data.i) || (stageSize->data.i > 1) || ((sc->convolutionStep) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)) && (stageAngle->data.d > 0)) || ((sc->performDCT) || (sc->performDST))))
 	{
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 
 	}
 	if (sc->useDisableThreads) {
@@ -450,7 +450,7 @@ static inline void appendRadixStageStrided(VkFFTSpecializationConstantsLayout* s
 				PfIf_end(sc);
 			}
 
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 
 
 			sc->useCoalescedLUTUploadToSM = 1;
@@ -476,7 +476,7 @@ static inline void appendRadixStageStrided(VkFFTSpecializationConstantsLayout* s
 					PfIf_end(sc);
 				}
 			}
-			appendBarrierVkFFT(sc);
+			appendBarrierVkFFT(sc, __FILE__, __LINE__);
 
 			if (sc->useDisableThreads) {
 				temp_int.data.i = 0;
@@ -549,7 +549,7 @@ static inline void appendRadixStageStrided(VkFFTSpecializationConstantsLayout* s
 	return;
 }
 
-static inline void appendRadixStage(VkFFTSpecializationConstantsLayout* sc, PfContainer* stageSize, PfContainer* stageSizeSum, PfContainer* stageAngle, PfContainer* stageRadix, int stageID, int shuffleType) {
+static inline void appendRadixStage(VkFFTSpecializationConstantsLayout* sc, PfContainer* stageSize, PfContainer* stageSizeSum, PfContainer* stageAngle, PfContainer* stageRadix, int stageID, int shuffleType, const char* file, int line) {
 	if (sc->res != VKFFT_SUCCESS) return;
 	if (sc->rader_generator[stageID]) {
 		for (pfUINT i = 0; i < sc->numRaderPrimes; i++) {
@@ -585,7 +585,7 @@ static inline void appendRadixStage(VkFFTSpecializationConstantsLayout* sc, PfCo
 	else {
 		switch (shuffleType % 10) {
 		case 0: {
-			appendRadixStageNonStrided(sc, stageSize, stageSizeSum, stageAngle, stageRadix);
+			appendRadixStageNonStrided(sc, stageSize, stageSizeSum, stageAngle, stageRadix, file, line);
 			
 			break;
 		}

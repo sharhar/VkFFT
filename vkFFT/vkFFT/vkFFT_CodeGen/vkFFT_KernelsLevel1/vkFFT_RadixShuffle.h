@@ -87,7 +87,7 @@ static inline void appendRadixShuffleNonStrided(VkFFTSpecializationConstantsLayo
 	
 	if ((!((sc->writeFromRegisters == 1) && (stageSize->data.i == sc->fftDim.data.i / stageRadix->data.i) && (!(((sc->convolutionStep) || (sc->useBluesteinFFT && sc->BluesteinConvolutionStep)) && (stageAngle->data.d < 0) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)))))) && (((sc->registerBoost == 1) && ((sc->localSize[0].data.i * logicalStoragePerThread.data.i > sc->fftDim.data.i) || (stageSize->data.i < sc->fftDim.data.i / stageRadix->data.i) || ((sc->reorderFourStep) && (sc->fftDim.data.i < sc->fft_dim_full.data.i) && (sc->localSize[1].data.i > 1)) || (sc->localSize[1].data.i > 1) || ((sc->performR2C) && (!sc->actualInverse) && (sc->axis_id == 0) && (!sc->forceCallbackVersionRealTransforms)) || ((sc->convolutionStep) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)) && (stageAngle->data.d < 0)))) || ((sc->performDCT) || (sc->performDST))))
 	{
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	}
 	//if ((sc->localSize[0] * logicalStoragePerThread > sc->fftDim) || (stageSize->data.i < sc->fftDim / stageRadix->data.i) || ((sc->reorderFourStep) && (sc->fftDim < sc->fft_dim_full) && (sc->localSize[1] > 1)) || (sc->localSize[1] > 1) || ((sc->performR2C) && (!sc->actualInverse) && (sc->axis_id == 0)) || ((sc->convolutionStep) && ((sc->matrixConvolution > 1) || (sc->numKernels > 1)) && (stageAngle->data.d < 0)) || (sc->registerBoost > 1) || (sc->performDCT)) {
 	if ((!((sc->writeFromRegisters == 1) && (stageSize->data.i == sc->fftDim.data.i / stageRadix->data.i) && (!(((sc->convolutionStep) || (sc->useBluesteinFFT && sc->BluesteinConvolutionStep)) && (stageAngle->data.d < 0) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)))))) && ((sc->localSize[0].data.i * logicalStoragePerThread.data.i > sc->fftDim.data.i) || (stageSize->data.i < sc->fftDim.data.i / stageRadix->data.i) || ((sc->reorderFourStep) && (sc->fftDim.data.i < sc->fft_dim_full.data.i) && (sc->localSize[1].data.i > 1)) || (sc->localSize[1].data.i > 1) || ((sc->performR2C) && (!sc->actualInverse) && (sc->axis_id == 0) && (!sc->forceCallbackVersionRealTransforms)) || ((sc->convolutionStep) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)) && (stageAngle->data.d < 0)) || (sc->registerBoost > 1) || ((sc->performDCT) || (sc->performDST)))) {
@@ -103,7 +103,7 @@ static inline void appendRadixShuffleNonStrided(VkFFTSpecializationConstantsLayo
 				for (pfUINT k = 0; k < sc->registerBoost; ++k) {
 					pfUINT t = 0;
 					if (sc->registerBoost > 1) {
-						appendBarrierVkFFT(sc);
+						appendBarrierVkFFT(sc, __FILE__, __LINE__);
 											
 						if (logicalGroupSize.data.i * logicalStoragePerThread.data.i > sc->fftDim.data.i) {
 							PfDivCeil(sc, &temp_int, &logicalStoragePerThread, &sc->fftDim);
@@ -213,7 +213,7 @@ sdata[sharedStride * gl_LocalInvocationID.y + inoutID + %" PRIu64 "] = temp%s%s;
 						{
 							PfIf_end(sc);
 						}
-						appendBarrierVkFFT(sc);
+						appendBarrierVkFFT(sc, __FILE__, __LINE__);
 						
 						if (logicalGroupSize.data.i * logicalStoragePerThreadNext.data.i > sc->fftDim.data.i) {
 							PfDivCeil(sc, &temp_int, &sc->fftDim, &logicalRegistersPerThreadNext);
@@ -401,7 +401,7 @@ static inline void appendRadixShuffleStrided(VkFFTSpecializationConstantsLayout*
 
 	if ((!((sc->writeFromRegisters == 1) && (stageSize->data.i == sc->fftDim.data.i / stageRadix->data.i) && (!(((sc->convolutionStep) || (sc->useBluesteinFFT && sc->BluesteinConvolutionStep)) && (stageAngle->data.d < 0) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)))))) && (((sc->axis_id == 0) && (sc->axis_upload_id == 0)) || (sc->localSize[1].data.i * logicalStoragePerThread.data.i > sc->fftDim.data.i) || (stageSize->data.i < sc->fftDim.data.i / stageRadix->data.i) || ((sc->convolutionStep) && ((sc->matrixConvolution > 1) || (sc->numKernels.data.i > 1)) && (stageAngle->data.d < 0)) || ((sc->performDCT) || (sc->performDST))))
 	{
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	}
 	if (stageSize->data.i == sc->fftDim.data.i / stageRadix->data.i) {
 		PfMov(sc, &sc->sharedStride, &sc->sharedStrideReadWriteConflict);
@@ -420,7 +420,7 @@ static inline void appendRadixShuffleStrided(VkFFTSpecializationConstantsLayout*
 				for (pfUINT k = 0; k < sc->registerBoost; ++k) {
 					pfUINT t = 0;
 					if (sc->registerBoost > 1) {
-						appendBarrierVkFFT(sc);
+						appendBarrierVkFFT(sc, __FILE__, __LINE__);
 
 						if (logicalGroupSize.data.i * logicalStoragePerThread.data.i > sc->fftDim.data.i) {
 							PfDivCeil(sc, &temp_int, &sc->fftDim, &logicalStoragePerThread);
@@ -507,7 +507,7 @@ sdata[sharedStride * gl_LocalInvocationID.y + inoutID + %" PRIu64 "] = temp%s%s;
 						{
 							PfIf_end(sc);
 						}
-						appendBarrierVkFFT(sc);
+						appendBarrierVkFFT(sc, __FILE__, __LINE__);
 
 						if (sc->useDisableThreads) {
 							temp_int.data.i = 0;

@@ -45,7 +45,7 @@ static inline void appendReorder4Step(VkFFTSpecializationConstantsLayout* sc, in
 	case 1: case 2: {//grouped_c2c
 		if ((sc->stageStartSize.data.i > 1) && (((!sc->reorderFourStep) && (sc->inverse) && (readWrite==0)) || ((!((sc->stageStartSize.data.i > 1) && (!sc->reorderFourStep) && (sc->inverse))) && (readWrite == 1)))) {
 			if (((!sc->readToRegisters) && (readWrite==0))|| ((!sc->writeFromRegisters) && (readWrite == 1))) {
-				appendBarrierVkFFT(sc);
+				appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			}
 			if (sc->useDisableThreads) {
 				temp_int.data.i = 0;

@@ -1395,7 +1395,7 @@ static inline void appendDCTI_read(VkFFTSpecializationConstantsLayout* sc, int t
 		PfDivCeil(sc, &used_registers, &fftDim, &sc->localSize[0]);
 	}
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -1595,7 +1595,7 @@ static inline void appendDCTII_read_III_write(VkFFTSpecializationConstantsLayout
 		PfDivCeil(sc, &used_registers, &fftDim, &sc->localSize[0]);
 	}
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -1781,7 +1781,7 @@ static inline void appendDCTII_write_III_read(VkFFTSpecializationConstantsLayout
 	}
 
 	if (((sc->performDST == 2) && (sc->actualInverse == 1)) || ((sc->performDST == 3) && (sc->actualInverse == 0))) {
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		if (sc->stridedSharedLayout) {
 			PfDivCeil(sc, &used_registers, &fftDim, &sc->localSize[1]);
 		}
@@ -1865,7 +1865,7 @@ static inline void appendDCTII_write_III_read(VkFFTSpecializationConstantsLayout
 		if (sc->useDisableThreads) {
 			PfIf_end(sc);
 		}
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 		if (sc->useDisableThreads) {
 			temp_int.data.i = 0;
@@ -1952,7 +1952,7 @@ static inline void appendDCTII_write_III_read(VkFFTSpecializationConstantsLayout
 		PfDivCeil(sc, &used_registers, &fftDim_half, &sc->localSize[0]);
 	}
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -2153,7 +2153,7 @@ static inline void appendDCTII_write_III_read(VkFFTSpecializationConstantsLayout
 		PfIf_end(sc);
 	}
 	if (((sc->performDST == 2) && (sc->actualInverse == 0)) || ((sc->performDST == 3) && (sc->actualInverse == 1))) {
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		if (sc->stridedSharedLayout) {
 			PfDivCeil(sc, &used_registers, &fftDim, &sc->localSize[1]);
 		}
@@ -2237,7 +2237,7 @@ static inline void appendDCTII_write_III_read(VkFFTSpecializationConstantsLayout
 		if (sc->useDisableThreads) {
 			PfIf_end(sc);
 		}
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 		if (sc->useDisableThreads) {
 			temp_int.data.i = 0;
@@ -2360,7 +2360,7 @@ static inline void appendDCTIV_even_read(VkFFTSpecializationConstantsLayout* sc,
 		else {
 			if (sc->readToRegisters == 1) {
 				appendSetSMToZero(sc);
-				appendBarrierVkFFT(sc);
+				appendBarrierVkFFT(sc, __FILE__, __LINE__);
 			}
 			fftDim.data.i = sc->fft_zeropad_Bluestein_left_read[sc->axis_id].data.i;
 		}
@@ -2508,7 +2508,7 @@ static inline void appendDCTIV_even_read(VkFFTSpecializationConstantsLayout* sc,
 			PfIf_end(sc);
 		}
 #if(((VKFFT_BACKEND==3)||(VKFFT_BACKEND==4)||(VKFFT_BACKEND==5)))
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		if (sc->useDisableThreads) {
 			temp_int.data.i = 0;
 			PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -2619,7 +2619,7 @@ static inline void appendDCTIV_even_read(VkFFTSpecializationConstantsLayout* sc,
 		}
 #endif
 	}
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -2739,7 +2739,7 @@ static inline void appendDCTIV_even_read(VkFFTSpecializationConstantsLayout* sc,
 	if (sc->useDisableThreads) {
 		PfIf_end(sc);
 	}
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -2848,7 +2848,7 @@ static inline void appendDCTIV_even_read(VkFFTSpecializationConstantsLayout* sc,
 	}
 #if(((VKFFT_BACKEND==3)||(VKFFT_BACKEND==4)||(VKFFT_BACKEND==5)))//OpenCL, Level Zero and Metal are  not handling barrier with thread-conditional writes to local memory - so this is a work-around
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -2998,7 +2998,7 @@ static inline void appendDCTIV_even_write(VkFFTSpecializationConstantsLayout* sc
 
 	appendDCTII_read_III_write(sc, type, 1);
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -3138,7 +3138,7 @@ static inline void appendDCTIV_even_write(VkFFTSpecializationConstantsLayout* sc
 	if (sc->useDisableThreads) {
 		PfIf_end(sc);
 	}
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -3314,7 +3314,7 @@ static inline void appendDCTIV_odd_read(VkFFTSpecializationConstantsLayout* sc, 
 		PfDivCeil(sc, &used_registers, &fftDim, &sc->localSize[0]);
 	}
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -3470,7 +3470,7 @@ static inline void appendDCTIV_odd_read(VkFFTSpecializationConstantsLayout* sc, 
 
 	if (!sc->readToRegisters) {
 
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		if (sc->useDisableThreads) {
 			temp_int.data.i = 0;
 			PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -3605,7 +3605,7 @@ static inline void appendDCTIV_odd_write(VkFFTSpecializationConstantsLayout* sc,
 		PfDivCeil(sc, &used_registers, &fftDim, &sc->localSize[0]);
 	}
 
-	appendBarrierVkFFT(sc);
+	appendBarrierVkFFT(sc, __FILE__, __LINE__);
 	if (sc->useDisableThreads) {
 		temp_int.data.i = 0;
 		PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -4030,7 +4030,7 @@ static inline void appendDCTIV_odd_write(VkFFTSpecializationConstantsLayout* sc,
 	}
 
 	if (sc->performDST) {
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		if (sc->useDisableThreads) {
 			temp_int.data.i = 0;
 			PfIf_gt_start(sc, &sc->disableThreads, &temp_int);
@@ -4120,7 +4120,7 @@ static inline void appendDCTIV_odd_write(VkFFTSpecializationConstantsLayout* sc,
 		if (sc->useDisableThreads) {
 			PfIf_end(sc);
 		}
-		appendBarrierVkFFT(sc);
+		appendBarrierVkFFT(sc, __FILE__, __LINE__);
 		
 		if (sc->useDisableThreads) {
 			temp_int.data.i = 0;
