@@ -177,7 +177,7 @@ static inline VkFFTResult VkFFT_CompileKernel(VkFFTApplication* app, VkFFTAxis* 
 			GLSLANG_MSG_DEFAULT_BIT,
 			(const glslang_resource_t*)&default_resource,
 		};
-		printf("%s\n", code0);
+		//printf("%s\n", code0);
 		glslang_shader_t* shader = glslang_shader_create((const glslang_input_t*)&input);
 		const char* err;
 		if (!glslang_shader_preprocess(shader, &input))

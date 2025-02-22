@@ -22,6 +22,8 @@
 #ifndef VKFFT_INITIALIZEAPP_H
 #define VKFFT_INITIALIZEAPP_H
 
+#include "../../../../../vkdispatch_native/include/internal.hh"
+
 #include "vkFFT/vkFFT_PlanManagement/vkFFT_HostFunctions/vkFFT_Scheduler.h"
 #include "vkFFT/vkFFT_PlanManagement/vkFFT_HostFunctions/vkFFT_RecursiveFFTGenerators.h"
 
@@ -1467,6 +1469,8 @@ static inline VkFFTResult setConfigurationVkFFT(VkFFTApplication* app, VkFFTConf
 }
 static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfiguration inputLaunchConfiguration) {
 	
+	LOG_INFO("VkFFT: Initializing VkFFT Start");
+
 	VkFFTResult resFFT = VKFFT_SUCCESS;
     unsigned char *test = (unsigned char*)app;
     if (app == 0){
@@ -1475,6 +1479,9 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 	if (memcmp(test, test + 1, sizeof(VkFFTApplication) - 1) != 0){
 		return VKFFT_ERROR_NONZERO_APP_INITIALIZATION;
 	}
+	
+	LOG_INFO("VkFFT: Initializing VkFFT");
+
 	resFFT = setConfigurationVkFFT(app, inputLaunchConfiguration);
 	if (resFFT != VKFFT_SUCCESS) {
 		deleteVkFFT(app);
@@ -1600,6 +1607,8 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 		}
 	}
 
+	LOG_INFO("VkFFT: VkFFT made forward and backward");
+
 	if (app->configuration.allocateTempBuffer && (app->configuration.tempBuffer == 0)) {
 #if(VKFFT_BACKEND==0)
 		VkResult res = VK_SUCCESS;
@@ -1710,6 +1719,9 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 			}
 		}
 	}
+	
+	LOG_INFO("VkFFT: VkFFT made temp buffer");
+
 	for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
 		if (app->useBluesteinFFT[i]) {
 			if (!app->configuration.makeInversePlanOnly)
@@ -1722,6 +1734,8 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 			}
 		}
 	}
+
+	LOG_INFO("VkFFT: VkFFT made phase vectors");
 
 	if (inputLaunchConfiguration.saveApplicationToString != 0) {
 		pfUINT totalBinarySize = 5 * sizeof(pfUINT);
@@ -1843,12 +1857,18 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 			}
 		}
 	}
+
+	LOG_INFO("VkFFT: VkFFT made application string");
+
 #if(VKFFT_BACKEND==0)
 	if (app->configuration.isCompilerInitialized) {
 		glslang_finalize_process();
 		app->configuration.isCompilerInitialized = 0;
 	}
 #endif
+
+	LOG_INFO("VkFFT: VkFFT initialized");
+
 	return resFFT;
 }
 
