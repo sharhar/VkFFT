@@ -1469,7 +1469,7 @@ static inline VkFFTResult setConfigurationVkFFT(VkFFTApplication* app, VkFFTConf
 }
 static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfiguration inputLaunchConfiguration) {
 	
-	LOG_INFO("VkFFT: Initializing VkFFT Start");
+	LOG_INFO("VkFFT %p: Initializing VkFFT Start", app);
 
 	VkFFTResult resFFT = VKFFT_SUCCESS;
     unsigned char *test = (unsigned char*)app;
@@ -1480,7 +1480,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 		return VKFFT_ERROR_NONZERO_APP_INITIALIZATION;
 	}
 	
-	LOG_INFO("VkFFT: Initializing VkFFT");
+	LOG_INFO("VkFFT %p: Initializing VkFFT", app);
 
 	resFFT = setConfigurationVkFFT(app, inputLaunchConfiguration);
 	if (resFFT != VKFFT_SUCCESS) {
@@ -1488,14 +1488,14 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 		return resFFT;
 	}
 
-	LOG_INFO("VkFFT: Configuration set");
+	LOG_INFO("VkFFT %p: Configuration set", app);
 
 	if (!app->configuration.makeForwardPlanOnly) {
 		app->localFFTPlan_inverse = (VkFFTPlan*)calloc(1, sizeof(VkFFTPlan));
 		if (app->localFFTPlan_inverse) {
-			LOG_INFO("VkFFT: Inverse plan being created...");
+			LOG_INFO("VkFFT %p: Inverse plan being created...", app);
 			for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
-				LOG_INFO("VkFFT: Inverse plan schedule dim %d", i);
+				LOG_INFO("VkFFT %p: Inverse plan schedule dim %d", app, i);
 				//app->configuration.sharedMemorySize = ((app->configuration.size[i] & (app->configuration.size[i] - 1)) == 0) ? app->configuration.sharedMemorySizePow2 : initSharedMemory;
 				resFFT = VkFFTScheduler(app, app->localFFTPlan_inverse, (int)i);
 				if (resFFT == VKFFT_ERROR_UNSUPPORTED_FFT_LENGTH) {
@@ -1521,7 +1521,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 			}
 			for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
 				//app->configuration.sharedMemorySize = ((app->configuration.size[i] & (app->configuration.size[i] - 1)) == 0) ? app->configuration.sharedMemorySizePow2 : initSharedMemory;
-				LOG_INFO("VkFFT: Inverse plan axis dim %d", i);
+				LOG_INFO("VkFFT %p: Inverse plan axis dim %d", app, i);
 				for (pfUINT j = 0; j < app->localFFTPlan_inverse->numAxisUploads[i]; j++) {
 					resFFT = VkFFTPlanAxis(app, app->localFFTPlan_inverse, i, j, 1, 0);
 					if (resFFT != VKFFT_SUCCESS) {
@@ -1529,6 +1529,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 						return resFFT;
 					}
 				}
+				LOG_INFO("VkFFT %p: Inverse plan axis bluestein dim %d", app, i);
 				if (app->useBluesteinFFT[i] && (app->localFFTPlan_inverse->numAxisUploads[i] > 1)) {
 					for (pfUINT j = 1; j < app->localFFTPlan_inverse->numAxisUploads[i]; j++) {
 						resFFT = VkFFTPlanAxis(app, app->localFFTPlan_inverse, i, j, 1, 1);
@@ -1538,6 +1539,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 						}
 					}
 				}
+				LOG_INFO("VkFFT %p: Inverse plan axis r2c dim %d", app, i);
 				if ((app->localFFTPlan_inverse->bigSequenceEvenR2C) && (i == 0)) {
 					resFFT = VkFFTPlanR2CMultiUploadDecomposition(app, app->localFFTPlan_inverse, 1);
 					if (resFFT != VKFFT_SUCCESS) {
@@ -1552,13 +1554,13 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 			return VKFFT_ERROR_MALLOC_FAILED;
 		}
 	}
-	LOG_INFO("VkFFT: Inverse plan made");
+	LOG_INFO("VkFFT %p: Inverse plan made", app);
 	if (!app->configuration.makeInversePlanOnly) {
 		app->localFFTPlan = (VkFFTPlan*)calloc(1, sizeof(VkFFTPlan));
 		if (app->localFFTPlan) {
-			LOG_INFO("VkFFT: Forward plan being created...");
+			LOG_INFO("VkFFT %p: Forward plan being created...", app);
 			for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
-				LOG_INFO("VkFFT: Forward plan schedule dim %d", i);
+				LOG_INFO("VkFFT %p: Forward plan schedule dim %d", app, i);
 				//app->configuration.sharedMemorySize = ((app->configuration.size[i] & (app->configuration.size[i] - 1)) == 0) ? app->configuration.sharedMemorySizePow2 : initSharedMemory;
 				resFFT = VkFFTScheduler(app, app->localFFTPlan, (int)i);
 				if (resFFT == VKFFT_ERROR_UNSUPPORTED_FFT_LENGTH) {
@@ -1583,7 +1585,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 				}
 			}
 			for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
-				LOG_INFO("VkFFT: Forward plan axis dim %d", i);
+				LOG_INFO("VkFFT %p: Forward plan axis dim %d", app, i);
 				//app->configuration.sharedMemorySize = ((app->configuration.size[i] & (app->configuration.size[i] - 1)) == 0) ? app->configuration.sharedMemorySizePow2 : initSharedMemory;
 				for (pfUINT j = 0; j < app->localFFTPlan->numAxisUploads[i]; j++) {
 					resFFT = VkFFTPlanAxis(app, app->localFFTPlan, i, j, 0, 0);
@@ -1616,7 +1618,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 		}
 	}
 
-	LOG_INFO("VkFFT: VkFFT made forward and backward");
+	LOG_INFO("VkFFT %p: VkFFT made forward and backward", app);
 
 	if (app->configuration.allocateTempBuffer && (app->configuration.tempBuffer == 0)) {
 #if(VKFFT_BACKEND==0)
@@ -1729,7 +1731,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 		}
 	}
 	
-	LOG_INFO("VkFFT: VkFFT made temp buffer");
+	LOG_INFO("VkFFT %p: VkFFT made temp buffer", app);
 
 	for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
 		if (app->useBluesteinFFT[i]) {
@@ -1744,7 +1746,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 		}
 	}
 
-	LOG_INFO("VkFFT: VkFFT made phase vectors");
+	LOG_INFO("VkFFT %p: VkFFT made phase vectors", app);
 
 	if (inputLaunchConfiguration.saveApplicationToString != 0) {
 		pfUINT totalBinarySize = 5 * sizeof(pfUINT);
@@ -1867,7 +1869,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 		}
 	}
 
-	LOG_INFO("VkFFT: VkFFT made application string");
+	LOG_INFO("VkFFT %p: VkFFT made application string", app);
 
 #if(VKFFT_BACKEND==0)
 	if (app->configuration.isCompilerInitialized) {
@@ -1876,7 +1878,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 	}
 #endif
 
-	LOG_INFO("VkFFT: VkFFT initialized");
+	LOG_INFO("VkFFT %p: VkFFT initialized", app);
 
 	return resFFT;
 }

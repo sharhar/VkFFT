@@ -23,6 +23,8 @@
 #define VKFFT_PLAN_FFT_H
 #include "vkFFT/vkFFT_Structs/vkFFT_Structs.h"
 
+#include "../../../../../../vkdispatch_native/include/internal.hh"
+
 #include "vkFFT/vkFFT_PlanManagement/vkFFT_API_handles/vkFFT_ManageMemory.h"
 #include "vkFFT/vkFFT_PlanManagement/vkFFT_API_handles/vkFFT_InitAPIParameters.h"
 #include "vkFFT/vkFFT_PlanManagement/vkFFT_API_handles/vkFFT_CompileKernel.h"
@@ -45,6 +47,9 @@ static inline VkFFTResult VkFFTPlanAxis(VkFFTApplication* app, VkFFTPlan* FFTPla
 	ze_result_t res = ZE_RESULT_SUCCESS;
 #elif(VKFFT_BACKEND==5)
 #endif
+
+	LOG_INFO("VkFFT: Plan axis %d", axis_id);
+
 	VkFFTAxis* axis = (reverseBluesteinMultiUpload) ? &FFTPlan->inverseBluesteinAxes[axis_id][axis_upload_id] : &FFTPlan->axes[axis_id][axis_upload_id];
 
 	axis->specializationConstants.sourceFFTSize.type = 31;
@@ -227,25 +232,38 @@ static inline VkFFTResult VkFFTPlanAxis(VkFFTApplication* app, VkFFTPlan* FFTPla
 	if ((FFTPlan->numAxisUploads[axis_id] > 1) && (axis->specializationConstants.reorderFourStep || app->useBluesteinFFT[axis_id]) && (!app->configuration.userTempBuffer) && (app->configuration.allocateTempBuffer == 0)) {
 		app->configuration.allocateTempBuffer = 1;
 	}
+
+	LOG_INFO("VkFFT: Axis %d upload %d", axis_id, axis_upload_id);
+
 	//generate Rader Kernels
 	resFFT = VkFFTGenerateRaderFFTKernel(app, axis);
 	if (resFFT != VKFFT_SUCCESS) {
 		deleteVkFFT(app);
 		return resFFT;
 	}
+
+	LOG_INFO("VkFFT: Rader FFT generated");
+
 	resFFT = VkFFT_AllocateLUT(app, FFTPlan, axis, inverse);
 	if (resFFT != VKFFT_SUCCESS) {
 		deleteVkFFT(app);
 		return resFFT;
 	}
+
+	LOG_INFO("VkFFT: LUT allocated");
+
 	axis->specializationConstants.additionalRaderSharedSize.type = 31;
 	if (axis->specializationConstants.useRaderMult)	axis->specializationConstants.additionalRaderSharedSize.data.i = (axis->specializationConstants.useRaderMult - 1);
+
+	LOG_INFO("VkFFT: Rader shared size %d", axis->specializationConstants.additionalRaderSharedSize.data.i);
 
 	resFFT = VkFFT_AllocateRaderUintLUT(app, axis);
 	if (resFFT != VKFFT_SUCCESS) {
 		deleteVkFFT(app);
 		return resFFT;
 	}
+
+	LOG_INFO("VkFFT: Rader LUT allocated");
 
 	//configure strides
 
@@ -416,11 +434,15 @@ static inline VkFFTResult VkFFTPlanAxis(VkFFTApplication* app, VkFFTPlan* FFTPla
 		}
 	}
 
+	LOG_INFO("VkFFT: Strides configured");
+
 	resFFT = VkFFTConfigureDescriptors(app, FFTPlan, axis, axis_id, axis_upload_id, inverse);
 	if (resFFT != VKFFT_SUCCESS) {
 		deleteVkFFT(app);
 		return resFFT;
 	}
+
+	LOG_INFO("VkFFT: Descriptors configured");
 
 	if (app->configuration.specifyOffsetsAtLaunch) {
 		axis->specializationConstants.performPostCompilationInputOffset = 1;
@@ -437,19 +459,28 @@ static inline VkFFTResult VkFFTPlanAxis(VkFFTApplication* app, VkFFTPlan* FFTPla
 		axis->specializationConstants.kernelOffset.data.i = app->configuration.kernelOffset;
 	}
 
+	LOG_INFO("VkFFT: Offsets configured");
+
 	resFFT = VkFFTCheckUpdateBufferSet(app, axis, 1, 0);
 	if (resFFT != VKFFT_SUCCESS) {
 		deleteVkFFT(app);
 		return resFFT;
 	}
+
+	LOG_INFO("VkFFT: Buffer set checked");
+
 	resFFT = VkFFTUpdateBufferSet(app, FFTPlan, axis, axis_id, axis_upload_id, inverse);
 	if (resFFT != VKFFT_SUCCESS) {
 		deleteVkFFT(app);
 		return resFFT;
 	}
 
+	LOG_INFO("VkFFT: Buffer set updated");
+
 	{
 		VkFFTSplitAxisBlock(app, FFTPlan, axis, axis_id, axis_upload_id, allowedSharedMemory, allowedSharedMemoryPow2);
+
+		LOG_INFO("VkFFT: Axis block split");
 		if ((axis->specializationConstants.axisSwapped) || (!((axis_id == 0) && (axis_upload_id == 0)))) axis->specializationConstants.stridedSharedLayout = 1;
 
 		/*VkSpecializationMapEntry specializationMapEntries[36] = { {} };
@@ -695,11 +726,15 @@ static inline VkFFTResult VkFFTPlanAxis(VkFFTApplication* app, VkFFTPlan* FFTPla
 		
 		if (((axis->specializationConstants.performDCT) || (axis->specializationConstants.performDST)) && ((axis->specializationConstants.numAxisUploads > 1) || (axis->specializationConstants.forceCallbackVersionRealTransforms))) type += 10;
 		
+		LOG_INFO("VkFFT: Shader generation started");
+
 		resFFT = initMemoryParametersAPI(app, &axis->specializationConstants);
 		if (resFFT != VKFFT_SUCCESS) {
 			deleteVkFFT(app);
 			return resFFT;
 		}
+
+		LOG_INFO("VkFFT: Memory parameters initialized");
 
 		switch (type/10) {
 		case 50: case 70: case 110: case 111: case 120: case 121: case 130: case 131: case 140: case 141: case 142: case 143:
@@ -748,11 +783,15 @@ static inline VkFFTResult VkFFTPlanAxis(VkFFTApplication* app, VkFFTPlan* FFTPla
 			break;
 		}
 
+		LOG_INFO("VkFFT: Memory codes set");
+
 		resFFT = initParametersAPI(app, &axis->specializationConstants);
 		if (resFFT != VKFFT_SUCCESS) {
 			deleteVkFFT(app);
 			return resFFT;
 		}
+
+		LOG_INFO("VkFFT: Parameters initialized");
 
 		axis->specializationConstants.code0 = (char*)malloc(sizeof(char) * app->configuration.maxCodeLength);
 		char* code0 = axis->specializationConstants.code0;
@@ -765,22 +804,34 @@ static inline VkFFTResult VkFFTPlanAxis(VkFFTApplication* app, VkFFTPlan* FFTPla
 #else
 		sprintf(axis->VkFFTFunctionName, "VkFFT_main");
 #endif
+
+		LOG_INFO("VkFFT: Function name set");
+
 		resFFT = shaderGen_FFT(&axis->specializationConstants, (int)type);
 		if (resFFT != VKFFT_SUCCESS) {
 			deleteVkFFT(app);
 			return resFFT;
 		}
+
+		LOG_INFO("VkFFT: Shader generated");
+
 		resFFT = VkFFT_CompileKernel(app, axis);
 		if (resFFT != VKFFT_SUCCESS) {
 			deleteVkFFT(app);
 			return resFFT;
 		}
+
+		LOG_INFO("VkFFT: Kernel compiled");
+
 		if (!app->configuration.keepShaderCode) {
 			free(code0);
 			code0 = 0;
 			axis->specializationConstants.code0 = 0;
 		}
 	}
+
+	LOG_INFO("VkFFT: Shader generation finished");
+
 	freeMemoryParametersAPI(app, &axis->specializationConstants);
 	freeParametersAPI(app, &axis->specializationConstants);
 	if (axis->specializationConstants.axisSwapped) {//swap back for correct dispatch
@@ -789,6 +840,9 @@ static inline VkFFTResult VkFFTPlanAxis(VkFFTApplication* app, VkFFTPlan* FFTPla
 		axis->axisBlock[0] = temp;
 		axis->specializationConstants.axisSwapped = 0;
 	}
+
+	LOG_INFO("VkFFT: Memory freed");
+
 	return resFFT;
 }
 
