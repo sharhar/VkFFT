@@ -1488,10 +1488,14 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 		return resFFT;
 	}
 
+	LOG_INFO("VkFFT: Configuration set");
+
 	if (!app->configuration.makeForwardPlanOnly) {
 		app->localFFTPlan_inverse = (VkFFTPlan*)calloc(1, sizeof(VkFFTPlan));
 		if (app->localFFTPlan_inverse) {
+			LOG_INFO("VkFFT: Inverse plan being created...");
 			for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
+				LOG_INFO("VkFFT: Inverse plan schedule dim %d", i);
 				//app->configuration.sharedMemorySize = ((app->configuration.size[i] & (app->configuration.size[i] - 1)) == 0) ? app->configuration.sharedMemorySizePow2 : initSharedMemory;
 				resFFT = VkFFTScheduler(app, app->localFFTPlan_inverse, (int)i);
 				if (resFFT == VKFFT_ERROR_UNSUPPORTED_FFT_LENGTH) {
@@ -1517,6 +1521,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 			}
 			for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
 				//app->configuration.sharedMemorySize = ((app->configuration.size[i] & (app->configuration.size[i] - 1)) == 0) ? app->configuration.sharedMemorySizePow2 : initSharedMemory;
+				LOG_INFO("VkFFT: Inverse plan axis dim %d", i);
 				for (pfUINT j = 0; j < app->localFFTPlan_inverse->numAxisUploads[i]; j++) {
 					resFFT = VkFFTPlanAxis(app, app->localFFTPlan_inverse, i, j, 1, 0);
 					if (resFFT != VKFFT_SUCCESS) {
@@ -1547,10 +1552,13 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 			return VKFFT_ERROR_MALLOC_FAILED;
 		}
 	}
+	LOG_INFO("VkFFT: Inverse plan made");
 	if (!app->configuration.makeInversePlanOnly) {
 		app->localFFTPlan = (VkFFTPlan*)calloc(1, sizeof(VkFFTPlan));
 		if (app->localFFTPlan) {
+			LOG_INFO("VkFFT: Forward plan being created...");
 			for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
+				LOG_INFO("VkFFT: Forward plan schedule dim %d", i);
 				//app->configuration.sharedMemorySize = ((app->configuration.size[i] & (app->configuration.size[i] - 1)) == 0) ? app->configuration.sharedMemorySizePow2 : initSharedMemory;
 				resFFT = VkFFTScheduler(app, app->localFFTPlan, (int)i);
 				if (resFFT == VKFFT_ERROR_UNSUPPORTED_FFT_LENGTH) {
@@ -1575,6 +1583,7 @@ static inline VkFFTResult initializeVkFFT(VkFFTApplication* app, VkFFTConfigurat
 				}
 			}
 			for (pfUINT i = 0; i < app->configuration.FFTdim; i++) {
+				LOG_INFO("VkFFT: Forward plan axis dim %d", i);
 				//app->configuration.sharedMemorySize = ((app->configuration.size[i] & (app->configuration.size[i] - 1)) == 0) ? app->configuration.sharedMemorySizePow2 : initSharedMemory;
 				for (pfUINT j = 0; j < app->localFFTPlan->numAxisUploads[i]; j++) {
 					resFFT = VkFFTPlanAxis(app, app->localFFTPlan, i, j, 0, 0);
