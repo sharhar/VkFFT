@@ -445,6 +445,8 @@ static inline VkFFTResult setConfigurationVkFFT(VkFFTApplication* app, VkFFTConf
 	}
 	//set device parameters
 #if(VKFFT_BACKEND==0)
+	app->configuration.glslang_mutex = inputLaunchConfiguration.glslang_mutex;
+
 	if (!inputLaunchConfiguration.isCompilerInitialized) {
 		if (!app->configuration.isCompilerInitialized) {
 			int resGlslangInitialize = glslang_initialize_process();
@@ -1460,6 +1462,7 @@ static inline VkFFTResult setConfigurationVkFFT(VkFFTApplication* app, VkFFTConf
 	//temporary set:
 	app->configuration.registerBoost4Step = 1;
 #if(VKFFT_BACKEND==0) 
+
 	app->configuration.useUint64 = 0; //No physical addressing mode in Vulkan shaders. Use multiple-buffer support to achieve emulation of physical addressing.
 #endif
 	//pfUINT initSharedMemory = app->configuration.sharedMemorySize;
