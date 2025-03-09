@@ -66,6 +66,8 @@
 #include "Metal/Metal.hpp"
 #endif
 
+#include <mutex>
+
 #ifdef VKFFT_USE_QUADMATH_FP128
 #include <quadmath.h>
 #endif
@@ -105,6 +107,7 @@ typedef struct {
 	VkFence* fence;//pointer to Vulkan fence, created with vkCreateFence
 	pfUINT isCompilerInitialized;//specify if glslang compiler has been intialized before (0 - off, 1 - on). Default 0
 	pfUINT usePushDescriptors;//specify if push descriptors have been enabled on the device - then all descriptor sets updates at VkFFTAppend call will be issued with push descriptors. (0 - off, 1 - on). Default 0
+	std::mutex* glslang_mutex; // mutex for synchronizing access to glslang compiler (NULL if not used). Default NULL
 #elif(VKFFT_BACKEND==1)
 	CUdevice* device;//pointer to CUDA device, obtained from cuDeviceGet
 	//CUcontext* context;//pointer to CUDA context, obtained from cuDeviceGet

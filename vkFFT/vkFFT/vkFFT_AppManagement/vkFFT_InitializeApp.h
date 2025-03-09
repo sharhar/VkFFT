@@ -466,6 +466,8 @@ static inline VkFFTResult setConfigurationVkFFT(VkFFTApplication* app, VkFFTConf
 	}
 	//set device parameters
 #if(VKFFT_BACKEND==0)
+	app->configuration.glslang_mutex = inputLaunchConfiguration.glslang_mutex;
+
 	if (!inputLaunchConfiguration.isCompilerInitialized) {
 		if (!app->configuration.isCompilerInitialized) {
 			int resGlslangInitialize = glslang_initialize_process();

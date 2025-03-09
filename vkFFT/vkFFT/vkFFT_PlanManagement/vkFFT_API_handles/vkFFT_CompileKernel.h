@@ -177,6 +177,10 @@ static inline VkFFTResult VkFFT_CompileKernel(VkFFTApplication* app, VkFFTAxis* 
 			GLSLANG_MSG_DEFAULT_BIT,
 			(const glslang_resource_t*)&default_resource,
 		};
+		
+		if(app->configuration.glslang_mutex != NULL)
+ 			app->configuration.glslang_mutex->lock();
+
 		//printf("%s\n", code0);
 		glslang_shader_t* shader = glslang_shader_create((const glslang_input_t*)&input);
 		const char* err;
@@ -249,6 +253,9 @@ static inline VkFFTResult VkFFT_CompileKernel(VkFFTApplication* app, VkFFTAxis* 
 		axis->binary = code;
 		memcpy(code, tempCode, codeSize);
 		glslang_program_delete(program);
+
+		if(app->configuration.glslang_mutex != NULL)
+ 			app->configuration.glslang_mutex->unlock();
 	}
 	VkPipelineShaderStageCreateInfo pipelineShaderStageCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
 	VkComputePipelineCreateInfo computePipelineCreateInfo = { VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO };
