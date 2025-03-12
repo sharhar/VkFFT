@@ -410,7 +410,15 @@ static inline VkFFTResult VkFFTGeneratePhaseVectors(VkFFTApplication* app, VkFFT
 				VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
 				submitInfo.commandBufferCount = 1;
 				submitInfo.pCommandBuffers = &commandBuffer;
+			
+				if(app->configuration.queue_mutex != NULL)
+					app->configuration.queue_mutex->lock();
+
 				res = vkQueueSubmit(kernelPreparationApplication.configuration.queue[0], 1, &submitInfo, kernelPreparationApplication.configuration.fence[0]);
+
+				if(app->configuration.queue_mutex != NULL)
+					app->configuration.queue_mutex->unlock();
+
 				if (res != 0) {
 					free(phaseVectors);
 					deleteVkFFT(&kernelPreparationApplication);
@@ -668,7 +676,15 @@ static inline VkFFTResult VkFFTGeneratePhaseVectors(VkFFTApplication* app, VkFFT
 			VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
 			submitInfo.commandBufferCount = 1;
 			submitInfo.pCommandBuffers = &commandBuffer;
+		
+			if(app->configuration.queue_mutex != NULL)
+				app->configuration.queue_mutex->lock();
+
 			res = vkQueueSubmit(kernelPreparationApplication.configuration.queue[0], 1, &submitInfo, kernelPreparationApplication.configuration.fence[0]);
+
+			if(app->configuration.queue_mutex != NULL)
+				app->configuration.queue_mutex->unlock();
+
 			if (res != 0) {
 				free(phaseVectors);
 				deleteVkFFT(&kernelPreparationApplication);
@@ -728,7 +744,15 @@ static inline VkFFTResult VkFFTGeneratePhaseVectors(VkFFTApplication* app, VkFFT
 			VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
 			submitInfo.commandBufferCount = 1;
 			submitInfo.pCommandBuffers = &commandBuffer;
+	
+			if(app->configuration.queue_mutex != NULL)
+				app->configuration.queue_mutex->lock();
+
 			res = vkQueueSubmit(kernelPreparationApplication.configuration.queue[0], 1, &submitInfo, kernelPreparationApplication.configuration.fence[0]);
+
+			if(app->configuration.queue_mutex != NULL)
+				app->configuration.queue_mutex->unlock();
+
 			if (res != 0) {
 				free(phaseVectors);
 				deleteVkFFT(&kernelPreparationApplication);
@@ -1234,7 +1258,15 @@ static inline VkFFTResult VkFFTGenerateRaderFFTKernel(VkFFTApplication* app, VkF
 					VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
 					submitInfo.commandBufferCount = 1;
 					submitInfo.pCommandBuffers = &commandBuffer;
+				
+					if(app->configuration.queue_mutex != NULL)
+						app->configuration.queue_mutex->lock();
+
 					res = vkQueueSubmit(kernelPreparationApplication.configuration.queue[0], 1, &submitInfo, kernelPreparationApplication.configuration.fence[0]);
+
+					if(app->configuration.queue_mutex != NULL)
+						app->configuration.queue_mutex->unlock();
+
 					if (res != 0) {
 						free(axis->specializationConstants.raderContainer[i].raderFFTkernel);
 						deleteVkFFT(&kernelPreparationApplication);

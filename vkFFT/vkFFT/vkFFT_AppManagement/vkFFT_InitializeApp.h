@@ -467,6 +467,7 @@ static inline VkFFTResult setConfigurationVkFFT(VkFFTApplication* app, VkFFTConf
 	//set device parameters
 #if(VKFFT_BACKEND==0)
 	app->configuration.glslang_mutex = inputLaunchConfiguration.glslang_mutex;
+	app->configuration.queue_mutex = inputLaunchConfiguration.queue_mutex;
 
 	if (!inputLaunchConfiguration.isCompilerInitialized) {
 		if (!app->configuration.isCompilerInitialized) {
