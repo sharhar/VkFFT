@@ -302,7 +302,11 @@ static inline void appendConversion(VkFFTSpecializationConstantsLayout* sc) {
 static inline void appendBarrierVkFFT(VkFFTSpecializationConstantsLayout* sc) {
 	if (sc->res != VKFFT_SUCCESS) return;
 #if(VKFFT_BACKEND==0)
+#ifdef __APPLE__
 	sc->tempLen = sprintf(sc->tempStr, "memoryBarrier();\nbarrier();\n\n");
+#else
+	sc->tempLen = sprintf(sc->tempStr, "barrier();\n\n");
+#endif
 	PfAppendLine(sc);
 #elif(VKFFT_BACKEND==1)
 	sc->tempLen = sprintf(sc->tempStr, "__syncthreads();\n\n");
